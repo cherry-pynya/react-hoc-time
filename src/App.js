@@ -10,7 +10,7 @@ function Video(props) {
     return (
         <div className="video">
             <iframe src={props.url} frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen title={props.url}></iframe>
-            <Hoc date={props.date} />
+            <DateTime date={props.date} />
         </div>
     )
 }
@@ -47,8 +47,10 @@ export default function App() {
         },
     ]);
 
+    const UpgradeList = WithHoc(<VideoList list={list} />);
+
     return (
-        <VideoList list={list} />
+        <UpgradeList />
     );
 }
 
@@ -60,7 +62,17 @@ function Hoc({ date }) {
     return DateTimePretty();
 }
 
+function WithHoc(Component){
+    const list = handleList(Component.props.list);
+    console.log(list)
+    function UpgradeComponent() {
+        return <VideoList list={list} />
+    }
+    return UpgradeComponent;
+}
+
 function handleDate(str) {
+    console.log(str)
     const now = new Date();
     const date = new Date(str);
     const diff = Math.abs(now.getTime() - date.getTime())
@@ -76,4 +88,11 @@ function handleDate(str) {
     }
     if (days === 1) return `${days} день назад`;
     return `${days} дней назад`;
+}
+
+function handleList(arr) {
+    for (let i = 0; i < arr.length; i += 1) {
+        arr[i].date = handleDate(arr[i].date);
+    }
+    return arr
 }
