@@ -47,28 +47,19 @@ export default function App() {
         },
     ]);
 
-    const UpgradeList = WithHoc(<VideoList list={list} />);
+    const UpgradeList = WithHoc(VideoList, list);
 
     return (
         <UpgradeList />
     );
 }
 
-function Hoc({ date }) {
-    const time = handleDate(date);
-    function DateTimePretty() {
-        return <DateTime date={time} />
+function WithHoc(Component, arr){
+    const list = handleList(arr);
+    function DateTimePrety() {
+        return <Component list={list} />
     }
-    return DateTimePretty();
-}
-
-function WithHoc(Component){
-    const list = handleList(Component.props.list);
-    console.log(list)
-    function UpgradeComponent() {
-        return <VideoList list={list} />
-    }
-    return UpgradeComponent;
+    return DateTimePrety;
 }
 
 function handleDate(str) {
