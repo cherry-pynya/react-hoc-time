@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 function DateTime(props) {
     return (
@@ -47,23 +47,28 @@ export default function App() {
         },
     ]);
 
-    const UpgradeList = WithHoc(VideoList, list);
+    const UpgradeList = WithHoc(VideoList);
 
     return (
-        <UpgradeList />
+        <UpgradeList list={list} />
     );
 }
 
-function WithHoc(Component, arr){
-    const list = handleList(arr);
-    function DateTimePrety() {
+function WithHoc(Component){
+    function DateTimePrety(props) {
+        const [list, setList] = useState([]);
+        useEffect(() => {
+            handleList(props.list)
+            .then((arr) => {
+                setList(arr);
+            })
+        }, [])
         return <Component list={list} />
     }
     return DateTimePrety;
 }
 
 function handleDate(str) {
-    console.log(str)
     const now = new Date();
     const date = new Date(str);
     const diff = Math.abs(now.getTime() - date.getTime())
@@ -81,9 +86,11 @@ function handleDate(str) {
     return `${days} дней назад`;
 }
 
-function handleList(arr) {
+async function handleList(arr) {
     for (let i = 0; i < arr.length; i += 1) {
-        arr[i].date = handleDate(arr[i].date);
+        arr[i].date = await handleDate(arr[i].date);
     }
     return arr
 }
+
+
